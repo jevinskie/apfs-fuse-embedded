@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.22)
 # set(CMAKE_C_COMPILER "clang")
 # set(CMAKE_CXX_COMPILER "clang++")
 
@@ -6,37 +6,22 @@ project(Apfs)
 
 option(USE_FUSE3 "Use the FUSE 3 library (required on 32-bit systems)" ON)
 
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_C_STANDARD 99)
+# set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_BUILD_TYPE Release)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -march=native -fsanitize=undefined")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -march=native -fsanitize=undefined")
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
 
-include_directories(. 3rdparty/lzfse/src)
+# include_directories(. 3rdparty/lzfse/src)
 
-add_library(lzfse
-	3rdparty/lzfse/src/lzfse.h
-	3rdparty/lzfse/src/lzfse_decode.c
-	3rdparty/lzfse/src/lzfse_decode_base.c
-	3rdparty/lzfse/src/lzfse_encode.c
-	3rdparty/lzfse/src/lzfse_encode_base.c
-	3rdparty/lzfse/src/lzfse_encode_tables.h
-	3rdparty/lzfse/src/lzfse_fse.c
-	3rdparty/lzfse/src/lzfse_fse.h
-	3rdparty/lzfse/src/lzfse_internal.h
-	3rdparty/lzfse/src/lzfse_tunables.h
-	3rdparty/lzfse/src/lzvn_decode_base.c
-	3rdparty/lzfse/src/lzvn_decode_base.h
-	3rdparty/lzfse/src/lzvn_encode_base.c
-	3rdparty/lzfse/src/lzvn_encode_base.h
-	)
+add_subdirectory(3rdparty)
 
-add_library(apfs
+set(APFS_SRC
 	ApfsLib/Aes.cpp
 	ApfsLib/Aes.h
 	ApfsLib/AesXts.cpp
@@ -99,9 +84,24 @@ add_library(apfs
 	ApfsLib/Util.cpp
 	ApfsLib/Util.h
 	ApfsLib/Unicode.cpp
-	ApfsLib/Unicode.h)
-target_link_libraries(apfs z bz2 lzfse)
-target_compile_definitions(apfs PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
+	ApfsLib/Unicode.h
+)
+
+add_library(apfs_shared SHARED ${APFS_SRC})
+target_link_libraries(apfs_shared zlib bz2 lzfse)
+target_compile_definitions(apfs_shared PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
+target_include_directories(apfs_shared PUBLIC .)
+
+add_library(apfs_static STATIC ${APFS_SRC})
+target_link_libraries(apfs_static zlibstatic bz2_static lzfse)
+target_compile_definitions(apfs_static PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
+target_include_directories(apfs_static PUBLIC .)
+
+if (BUILD_SHARED_LIBS)
+	add_library(apfs ALIAS apfs_shared)
+else()
+	add_library(apfs ALIAS apfs_static)
+endif()
 
 add_executable(apfs-dump
 	ApfsDump/Dumper.cpp

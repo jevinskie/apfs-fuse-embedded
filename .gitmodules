@@ -1,3 +1,9 @@
 [submodule "3rdparty/lzfse"]
 	path = 3rdparty/lzfse
 	url = https://github.com/lzfse/lzfse.git
+[submodule "3rdparty/zlib"]
+	path = 3rdparty/zlib
+	url = https://github.com/madler/zlib
+[submodule "3rdparty/bzip2"]
+	path = 3rdparty/bzip2
+	url = https://gitlab.com/bzip2/bzip2

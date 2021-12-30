@@ -38,7 +38,9 @@ class ApfsContainer;
 class ApfsVolume;
 
 // This enables a rudimentary disk cache ...
+#ifndef _LIBCPP_HAS_NO_THREADS
 #define BTREE_USE_MAP
+#endif
 // TODO: Think about a better solution.
 // 8192 will take max. 32 MB of RAM. Higher may be faster, but use more RAM.
 #define BTREE_MAP_MAX_NODES 8192

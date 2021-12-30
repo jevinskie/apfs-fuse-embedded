@@ -2,9 +2,14 @@ cmake_minimum_required(VERSION 3.22)
 # set(CMAKE_C_COMPILER "clang")
 # set(CMAKE_CXX_COMPILER "clang++")
 
+cmake_policy(VERSION 3.22)
+
 project(Apfs)
 
 option(USE_FUSE3 "Use the FUSE 3 library (required on 32-bit systems)" ON)
+
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries")
+
 
 # set(CMAKE_C_STANDARD 99)
 # set(CMAKE_CXX_STANDARD 11)
@@ -88,14 +93,16 @@ set(APFS_SRC
 )
 
 add_library(apfs_shared SHARED ${APFS_SRC})
-target_link_libraries(apfs_shared zlib bz2 lzfse)
+target_link_libraries(apfs_shared zlibstatic bz2_static lzfse tl::expected)
 target_compile_definitions(apfs_shared PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_shared PUBLIC .)
 
 add_library(apfs_static STATIC ${APFS_SRC})
-target_link_libraries(apfs_static zlibstatic bz2_static lzfse)
+target_link_libraries(apfs_static zlibstatic bz2_static lzfse tl::expected)
 target_compile_definitions(apfs_static PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_static PUBLIC .)
+
+set_property(TARGET apfs_shared apfs_static PROPERTY CXX_STANDARD 20)
 
 if (BUILD_SHARED_LIBS)
 	add_library(apfs ALIAS apfs_shared)

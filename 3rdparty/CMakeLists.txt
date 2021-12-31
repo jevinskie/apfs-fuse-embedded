@@ -3,6 +3,7 @@ set(ENABLE_STATIC_LIB ON)
 add_subdirectory(bzip2)
 target_include_directories(bz2_static PUBLIC bzip2)
 
+set(EXPECTED_BUILD_TESTS OFF)
 add_subdirectory(expected)
 
 set(LZFSE_BUNDLE_MODE ON)

@@ -125,10 +125,12 @@ add_executable(apfs-dump
 	ApfsDump/Dumper.h
 	ApfsDump/Apfs.cpp)
 target_link_libraries(apfs-dump apfs)
+set_property(TARGET apfs-dump PROPERTY CXX_STANDARD 20)
 
 add_executable(apfs-dump-quick
 	ApfsDumpQuick/ApfsDumpQuick.cpp)
 target_link_libraries(apfs-dump-quick apfs)
+set_property(TARGET apfs-dump-quick PROPERTY CXX_STANDARD 20)
 
 add_executable(apfs-fuse
 	apfsfuse/ApfsFuse.cpp)
@@ -146,9 +148,11 @@ target_link_libraries(apfs-fuse apfs fuse)
 target_compile_definitions(apfs-fuse PRIVATE USE_FUSE2)
 endif()
 endif()
+set_property(TARGET apfs-fuse PROPERTY CXX_STANDARD 20)
 
 add_executable(apfsutil ApfsUtil/ApfsUtil.cpp)
 target_link_libraries(apfsutil apfs)
+set_property(TARGET apfsutil PROPERTY CXX_STANDARD 20)
 
 include(GNUInstallDirs)
 install(TARGETS apfs-fuse RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")

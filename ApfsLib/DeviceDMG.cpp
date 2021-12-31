@@ -424,7 +424,7 @@ bool DeviceDMG::ProcessHeaderXML(uint64_t off, uint64_t size)
 	m_img.Read(off, xmldata.data(), size);
 
 	PListXmlParser parser(xmldata.data(), xmldata.size());
-	const PLDict *plist = parser.Parse()->toDict();
+	const PLDict *plist = std::get<PLDict>(parser.Parse());
 
 	if (!plist)
 		return false;

@@ -9,6 +9,10 @@ set(LZFSE_BUNDLE_MODE ON)
 add_subdirectory(lzfse)
 target_include_directories(lzfse PUBLIC lzfse/src)
 
+set(BUILD_TESTING OFF)
+set(ENABLE_BENCHMARKS OFF)
+add_subdirectory(visit)
+
 set(ZLIB_COMPAT ON)
 add_subdirectory(zlib-ng)
 target_include_directories(zlib PUBLIC ${zlib_BINARY_DIR})

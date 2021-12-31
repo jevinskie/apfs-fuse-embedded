@@ -3,16 +3,20 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <variant>
+#include <cassert>
 
-enum PLType
+enum class PLType
 {
 	PLType_Integer,
 	PLType_String,
 	PLType_Data,
 	PLType_Array,
-	PLType_Dict
+	PLType_Dict,
+	PLType_Base,
 };
 
+class PLObjectBase;
 class PLInteger;
 class PLString;
 class PLData;
@@ -30,30 +34,40 @@ private:
 	const char *m_reason;
 };
 
-class PLObject
-{
-protected:
-	PLObject();
-public:
-	virtual ~PLObject();
+using PLObject = std::variant<PLObjectBase, PLInteger, PLString, PLData, PLArray, PLDict>;
 
-	virtual PLType type() const = 0;
-
-	const PLInteger *toInt() const;
-	const PLString *toString() const;
-	const PLData *toData() const;
-	const PLArray *toArray() const;
-	const PLDict *toDict() const;
-};
-
-class PLInteger : public PLObject
+class PLObjectBase
 {
 	friend class PListXmlParser;
 public:
-	PLInteger();
-	virtual ~PLInteger();
 
-	PLType type() const override;
+	PLType type() const {
+		assert(!"type() called on PLObjectBase");
+	}
+
+	const PLInteger * toInt() const {
+		return nullptr;
+	}
+	const PLString * toString() const {
+		return nullptr;
+	}
+	const PLData * toData() const {
+		return nullptr;
+	}
+	const PLArray * toArray() const {
+		return nullptr;
+	}
+	const PLDict * toDict() const {
+		return nullptr;
+	}
+};
+
+class PLInteger : public PLObjectBase
+{
+	friend class PListXmlParser;
+public:
+
+	PLType type() const { return PLType::PLType_Integer; }
 
 	int64_t value() const { return m_value; }
 
@@ -61,14 +75,14 @@ private:
 	int64_t m_value;
 };
 
-class PLString : public PLObject
+class PLString
 {
 	friend class PListXmlParser;
 public:
 	PLString();
 	virtual ~PLString();
 
-	PLType type() const override;
+	PLType type() const { return PLType::PLType_String; }
 
 	const std::string &string() const { return m_string; }
 
@@ -76,14 +90,14 @@ private:
 	std::string m_string;
 };
 
-class PLData : public PLObject
+class PLData
 {
 	friend class PListXmlParser;
 public:
 	PLData();
 	virtual ~PLData();
 
-	PLType type() const override;
+	PLType type() const { return PLType::PLType_Data; }
 
 	const uint8_t *data() const { return m_data.data(); }
 	size_t size() const { return m_data.size(); }
@@ -92,14 +106,14 @@ private:
 	std::vector<uint8_t> m_data;
 };
 
-class PLArray : public PLObject
+class PLArray
 {
 	friend class PListXmlParser;
 public:
 	PLArray();
 	virtual ~PLArray();
 
-	PLType type() const override;
+	PLType type() const { return PLType::PLType_Array; }
 
 	PLObject *get(size_t idx) const;
 	size_t size() const { return m_array.size(); }
@@ -110,14 +124,14 @@ private:
 	std::vector<PLObject *> m_array;
 };
 
-class PLDict : public PLObject
+class PLDict
 {
 	friend class PListXmlParser;
 public:
 	PLDict();
 	virtual ~PLDict();
 
-	PLType type() const override;
+	PLType type() const { return PLType::PLType_Dict; }
 
 	PLObject *get(const char *name) const;
 

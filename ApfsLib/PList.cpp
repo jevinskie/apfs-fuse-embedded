@@ -2,78 +2,6 @@
 
 #include "PList.h"
 
-PLObject::PLObject()
-{
-}
-
-PLObject::~PLObject()
-{
-}
-
-const PLInteger * PLObject::toInt() const
-{
-	return dynamic_cast<const PLInteger *>(this);
-}
-
-const PLString * PLObject::toString() const
-{
-	return dynamic_cast<const PLString *>(this);
-}
-
-const PLData * PLObject::toData() const
-{
-	return dynamic_cast<const PLData *>(this);
-}
-
-const PLArray * PLObject::toArray() const
-{
-	return dynamic_cast<const PLArray *>(this);
-}
-
-const PLDict * PLObject::toDict() const
-{
-	return dynamic_cast<const PLDict *>(this);
-}
-
-PLInteger::PLInteger()
-{
-}
-
-PLInteger::~PLInteger()
-{
-}
-
-PLType PLInteger::type() const
-{
-	return PLType_Integer;
-}
-
-PLString::PLString()
-{
-}
-
-PLString::~PLString()
-{
-}
-
-PLType PLString::type() const
-{
-	return PLType_String;
-}
-
-PLData::PLData()
-{
-}
-
-PLData::~PLData()
-{
-}
-
-PLType PLData::type() const
-{
-	return PLType_Data;
-}
-
 PLArray::PLArray()
 {
 }
@@ -83,11 +11,6 @@ PLArray::~PLArray()
 	for (std::vector<PLObject *>::iterator it = m_array.begin(); it != m_array.end(); it++)
 		delete *it;
 	m_array.clear();
-}
-
-PLType PLArray::type() const
-{
-	return PLType_Array;
 }
 
 PLObject * PLArray::get(size_t idx) const
@@ -107,11 +30,6 @@ PLDict::~PLDict()
 	for (std::map<std::string, PLObject*>::iterator it = m_dict.begin(); it != m_dict.end(); it++)
 		delete it->second;
 	m_dict.clear();
-}
-
-PLType PLDict::type() const
-{
-	return PLType_Dict;
 }
 
 PLObject * PLDict::get(const char * name) const
@@ -245,7 +163,7 @@ PLObject * PListXmlParser::ParseObject()
 
 			PLInteger *obj = new PLInteger();
 			obj->m_value = strtoll(content_str.c_str(), nullptr, 0);
-			robj = obj;
+			*robj = *obj;
 		}
 		else if (name == "string")
 		{
@@ -256,7 +174,7 @@ PLObject * PListXmlParser::ParseObject()
 
 			PLString *obj = new PLString();
 			obj->m_string = content_str;
-			robj = obj;
+			*robj = *obj;
 		}
 		else if (name == "data")
 		{
@@ -269,21 +187,21 @@ PLObject * PListXmlParser::ParseObject()
 
 			PLData *obj = new PLData();
 			Base64Decode(obj->m_data, content_start, content_size);
-			robj = obj;
+			*robj = *obj;
 		}
 		else if (name == "array")
 		{
 			PLArray *obj = ParseArray();
 			if (!obj)
 				return nullptr;
-			robj = obj;
+			*robj = *obj;
 		}
 		else if (name == "dict")
 		{
 			PLDict *obj = ParseDict();
 			if (!obj)
 				return nullptr;
-			robj = obj;
+			*robj = *obj;
 		}
 		else
 		{
@@ -296,13 +214,13 @@ PLObject * PListXmlParser::ParseObject()
 		{
 			PLInteger *obj = new PLInteger();
 			obj->m_value = 1;
-			robj = obj;
+			*robj = *obj;
 		}
 		else if (name == "false")
 		{
 			PLInteger *obj = new PLInteger();
 			obj->m_value = 0;
-			robj = obj;
+			*robj = *obj;
 		}
 		else
 		{

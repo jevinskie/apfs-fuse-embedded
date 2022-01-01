@@ -59,8 +59,7 @@ class PLData
 {
 	friend class PListXmlParser;
 public:
-	PLData();
-	virtual ~PLData();
+	PLData(std::vector<uint8_t> data) : m_data{data} {};
 
 	PLType type() const { return PLType::PLType_Data; }
 

@@ -178,9 +178,9 @@ ExpectedPLObject PListXmlParser::ParseObject()
 			if (name != "data" || type != TagType::End)
 				return kz::unexpected{"Invalid end tag, expected </data>."};
 
-			PLObject *obj = new PLObject{PLData{}};
-			Base64Decode(std::get_if<PLData>(obj)->m_data, content_start, content_size);
-			return obj;
+			std::vector<uint8_t> data;
+			Base64Decode(data, content_start, content_size);
+			return new PLObject{PLData{data}};
 		}
 		else if (name == "array")
 		{

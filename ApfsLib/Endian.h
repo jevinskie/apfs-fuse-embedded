@@ -54,10 +54,13 @@ Also helps making the driver run on big-endian architectures.
 
 #elif __has_builtin(__builtin_bswap16)
 
+#ifndef bswap_16
 #define bswap_16(x) __builtin_bswap16(x)
 #define bswap_32(x) __builtin_bswap32(x)
 #define bswap_64(x) __builtin_bswap64(x)
+#endif
 
+#ifndef be16toh
 #ifdef __LITTLE_ENDIAN__
 
 #define be16toh(x) bswap_16(x)
@@ -91,6 +94,7 @@ Also helps making the driver run on big-endian architectures.
 #define htole32(x) bswap_32(x)
 #define htole64(x) bswap_64(x)
 
+#endif
 #endif
 
 #elif defined(__linux__)

@@ -184,17 +184,21 @@ ExpectedPLObject PListXmlParser::ParseObject()
 		}
 		else if (name == "array")
 		{
-			ExpectedPLArray obj = ParseArray();
-			if (!obj)
-				return kz::unexpected{obj.error()};
+			ExpectedPLArray aobj = ParseArray();
+			if (!aobj)
+				return kz::unexpected{aobj.error()};
+			auto obj = new PLObject{**aobj};
+			delete *aobj;
 			return obj;
 		}
 		else if (name == "dict")
 		{
-			PLDict *obj = ParseDict();
-			if (!obj)
-				return kz::unexpected{"Missing dict."};
-			*robj = *obj;
+			ExpectedPLDict dobj = ParseDict();
+			if (!dobj)
+				return kz::unexpected{dobj.error()};
+			auto obj = new PLObject{**dobj};
+			delete *dobj;
+			return obj;
 		}
 		else
 		{
@@ -205,15 +209,11 @@ ExpectedPLObject PListXmlParser::ParseObject()
 	{
 		if (name == "true")
 		{
-			PLInteger *obj = new PLInteger();
-			obj->m_value = 1;
-			*robj = *obj;
+			return new PLObject{PLInteger{1}};
 		}
 		else if (name == "false")
 		{
-			PLInteger *obj = new PLInteger();
-			obj->m_value = 0;
-			*robj = *obj;
+			return new PLObject{PLInteger{0}};
 		}
 		else
 		{
@@ -225,7 +225,7 @@ ExpectedPLObject PListXmlParser::ParseObject()
 		return kz::unexpected{"PList end."};
 	}
 
-	return robj;
+	return kz::unexpected{"PList dunno."};;
 }
 
 void PListXmlParser::Base64Decode(std::vector<uint8_t>& bin, const char * str, size_t size)

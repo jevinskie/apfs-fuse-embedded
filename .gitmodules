@@ -12,4 +12,4 @@
 	url = https://github.com/jevinskie/visit
 [submodule "3rdparty/expected"]
 	path = 3rdparty/expected
-	url = https://github.com/jevinskie/expected-kiznit
+	url = https://github.com/kiznit/expected

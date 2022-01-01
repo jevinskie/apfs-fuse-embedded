@@ -7,9 +7,6 @@
 [submodule "3rdparty/zlib-ng"]
 	path = 3rdparty/zlib-ng
 	url = https://github.com/zlib-ng/zlib-ng
-[submodule "3rdparty/visit"]
-	path = 3rdparty/visit
-	url = https://github.com/jevinskie/visit
 [submodule "3rdparty/expected"]
 	path = 3rdparty/expected
 	url = https://github.com/kiznit/expected

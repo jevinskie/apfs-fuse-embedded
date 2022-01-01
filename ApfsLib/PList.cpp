@@ -55,34 +55,33 @@ PListXmlParser::~PListXmlParser()
 
 }
 
-PLObject * PListXmlParser::Parse()
+tl::expected<PLDict *, const char *> PListXmlParser::Parse()
 {
 	std::string name;
 	std::string content;
 	TagType type;
-	PLObject *root = nullptr;
 
 	while (FindTag(name, type))
 	{
 		if (type == TagType::Start && name == "plist")
 		{
-			try
-			{
-				root = ParseObject();
+			ExpectedPLObject root_obj = ParseObject();
+			if (!root_obj) {
+				fprintf(stderr, "XML PList parse error: %s\n", root_obj.error());
+				return tl::unexpected{root_obj.error()};
 			}
-			catch (PLException &ex)
-			{
-				delete root;
-				root = nullptr;
-
-				fprintf(stderr, "XML PList parse error: %s\n", ex.what());
+			PLObject *o = *root_obj;
+			if (PLDict *dict_obj = std::get_if<PLDict>(o)) {
+				return dict_obj;
+			} else {
+				return tl::unexpected{"PList root wasn't dict."};
 			}
 
 			break;
 		}
 	}
 
-	return root;
+	return tl::unexpected{"PList root fail."};;
 }
 
 PLArray * PListXmlParser::ParseArray()
@@ -103,7 +102,7 @@ PLArray * PListXmlParser::ParseArray()
 	return arr;
 }
 
-PLDict * PListXmlParser::ParseDict()
+tl::expected<PLDict *, const char *> PListXmlParser::ParseDict()
 {
 	PLDict *dict = new PLDict();
 	PLObject *obj;
@@ -120,17 +119,17 @@ PLDict * PListXmlParser::ParseDict()
 			break;
 
 		if (tagname != "key" || tagtype != TagType::Start)
-			throw PLException("Invalid tag in dict");
+			return tl::make_unexpected{"Invalid tag in dict"};
 
 		GetContent(key);
 
 		if (key.empty())
-			throw PLException("Empty key in dict");
+			return tl::make_unexpected{"Empty key in dict"};
 
 		FindTag(tagname, tagtype);
 
 		if (tagname != "key" || tagtype != TagType::End)
-			throw PLException("Invalid tag type, expected </key>");
+			return tl::make_unexpected{"Invalid tag type, expected </key>"};
 
 		obj = ParseObject();
 
@@ -141,14 +140,14 @@ PLDict * PListXmlParser::ParseDict()
 	return dict;
 }
 
-PLObject * PListXmlParser::ParseObject()
+ExpectedPLObject PListXmlParser::ParseObject()
 {
 	std::string name;
 	TagType type;
 	std::string content_str;
 	const char *content_start;
 	size_t content_size;
-	PLObject *robj = nullptr;
+	ExpectedPLObject robj;
 
 	FindTag(name, type);
 
@@ -159,7 +158,7 @@ PLObject * PListXmlParser::ParseObject()
 			GetContent(content_str);
 			FindTag(name, type);
 			if (name != "integer" || type != TagType::End)
-				throw PLException("Invalid end tag, expected </integer>.");
+				return tl::make_unexpected{"Invalid end tag, expected </integer>."};
 
 			PLInteger *obj = new PLInteger();
 			obj->m_value = strtoll(content_str.c_str(), nullptr, 0);
@@ -170,7 +169,7 @@ PLObject * PListXmlParser::ParseObject()
 			GetContent(content_str);
 			FindTag(name, type);
 			if (name != "string" || type != TagType::End)
-				throw PLException("Invalid end tag, expected </string>.");
+				return tl::make_unexpected{"Invalid end tag, expected </string>."};
 
 			PLString *obj = new PLString();
 			obj->m_string = content_str;
@@ -183,7 +182,7 @@ PLObject * PListXmlParser::ParseObject()
 
 			FindTag(name, type);
 			if (name != "data" || type != TagType::End)
-				throw PLException("Invalid end tag, expected </data>.");
+				return tl::make_unexpected{"Invalid end tag, expected </data>."};
 
 			PLData *obj = new PLData();
 			Base64Decode(obj->m_data, content_start, content_size);
@@ -193,19 +192,19 @@ PLObject * PListXmlParser::ParseObject()
 		{
 			PLArray *obj = ParseArray();
 			if (!obj)
-				return nullptr;
+				return tl::make_unexpected{"Missing array."};;
 			*robj = *obj;
 		}
 		else if (name == "dict")
 		{
 			PLDict *obj = ParseDict();
 			if (!obj)
-				return nullptr;
+				return tl::make_unexpected{"Missing dict."};
 			*robj = *obj;
 		}
 		else
 		{
-			throw PLException("Unexpected start tag.");
+			return tl::make_unexpected{"Unexpected start tag."};
 		}
 	}
 	else if (type == TagType::Empty)
@@ -224,12 +223,12 @@ PLObject * PListXmlParser::ParseObject()
 		}
 		else
 		{
-			throw PLException("Unexpected empty tag.");
+			tl::make_unexpected{"Unexpected empty tag."};
 		}
 	}
 	else if (type == TagType::End)
 	{
-		return nullptr;
+		return tl::make_unexpected{"PList end."};
 	}
 
 	return robj;
@@ -374,21 +373,4 @@ size_t PListXmlParser::GetContentSize()
 		return m_idx - start;
 
 	return m_idx - start;
-}
-
-PList::PList()
-{
-	m_root = nullptr;
-}
-
-PList::~PList()
-{
-}
-
-bool PList::parseXML(const char * data, size_t size)
-{
-	(void)data;
-	(void)size;
-
-	return false;
 }

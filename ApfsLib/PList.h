@@ -5,6 +5,7 @@
 #include <memory>
 #include <variant>
 #include <cassert>
+#include <tl/expected.hpp>
 
 enum class PLType
 {
@@ -23,18 +24,8 @@ class PLData;
 class PLArray;
 class PLDict;
 
-class PLException : public std::exception
-{
-public:
-	PLException(const char *reason) { m_reason = reason; }
-
-	const char *what() const noexcept override { return m_reason; }
-
-private:
-	const char *m_reason;
-};
-
-using PLObject = std::variant<PLObjectBase, PLInteger, PLString, PLData, PLArray, PLDict>;
+using PLObject = std::variant<PLInteger, PLString, PLData, PLArray, PLDict>;
+using ExpectedPLObject = tl::expected<PLObject *, const char *>;
 
 class PLObjectBase
 {
@@ -157,12 +148,12 @@ public:
 	PListXmlParser(const char *data, size_t size);
 	~PListXmlParser();
 
-	PLObject *Parse();
+	tl::expected<PLDict *, const char *> Parse();
 
 private:
 	PLArray * ParseArray();
 	PLDict * ParseDict();
-	PLObject * ParseObject();
+	ExpectedPLObject ParseObject();
 	void Base64Decode(std::vector<uint8_t> &bin, const char *str, size_t size);
 
 	bool FindTag(std::string &name, TagType &type);
@@ -180,17 +171,4 @@ private:
 	const char * const m_data;
 	const size_t m_size;
 	size_t m_idx;
-};
-
-// Not used ... maybe later, if we need bplists ...
-class PList
-{
-public:
-	PList();
-	~PList();
-
-	bool parseXML(const char *data, size_t size);
-
-private:
-	PLObject * m_root;
 };

@@ -10,6 +10,3 @@
 [submodule "3rdparty/visit"]
 	path = 3rdparty/visit
 	url = https://github.com/jevinskie/visit
-[submodule "3rdparty/expected"]
-	path = 3rdparty/expected
-	url = https://github.com/TartanLlama/expected

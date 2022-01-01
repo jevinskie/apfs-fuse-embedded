@@ -5,7 +5,7 @@
 #include <memory>
 #include <variant>
 #include <cassert>
-#include <tl/expected.hpp>
+#include <kz/expected.hpp>
 
 enum class PLType
 {
@@ -25,7 +25,9 @@ class PLArray;
 class PLDict;
 
 using PLObject = std::variant<PLInteger, PLString, PLData, PLArray, PLDict>;
-using ExpectedPLObject = tl::expected<PLObject *, const char *>;
+using ExpectedPLObject = kz::expected<PLObject *, const char *>;
+using ExpectedPLArray = kz::expected<PLArray *, const char *>;
+using ExpectedPLDict = kz::expected<PLDict *, const char *>;
 
 class PLObjectBase
 {
@@ -148,11 +150,11 @@ public:
 	PListXmlParser(const char *data, size_t size);
 	~PListXmlParser();
 
-	tl::expected<PLDict *, const char *> Parse();
+	ExpectedPLObject Parse();
 
 private:
-	PLArray * ParseArray();
-	PLDict * ParseDict();
+	ExpectedPLArray ParseArray();
+	ExpectedPLDict ParseDict();
 	ExpectedPLObject ParseObject();
 	void Base64Decode(std::vector<uint8_t> &bin, const char *str, size_t size);
 

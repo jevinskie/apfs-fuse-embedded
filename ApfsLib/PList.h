@@ -14,10 +14,8 @@ enum class PLType
 	PLType_Data,
 	PLType_Array,
 	PLType_Dict,
-	PLType_Base,
 };
 
-class PLObjectBase;
 class PLInteger;
 class PLString;
 class PLData;
@@ -29,36 +27,11 @@ using ExpectedPLObject = kz::expected<PLObject *, const char *>;
 using ExpectedPLArray = kz::expected<PLArray *, const char *>;
 using ExpectedPLDict = kz::expected<PLDict *, const char *>;
 
-class PLObjectBase
+class PLInteger
 {
 	friend class PListXmlParser;
 public:
-
-	PLType type() const {
-		assert(!"type() called on PLObjectBase");
-	}
-
-	const PLInteger * toInt() const {
-		return nullptr;
-	}
-	const PLString * toString() const {
-		return nullptr;
-	}
-	const PLData * toData() const {
-		return nullptr;
-	}
-	const PLArray * toArray() const {
-		return nullptr;
-	}
-	const PLDict * toDict() const {
-		return nullptr;
-	}
-};
-
-class PLInteger : public PLObjectBase
-{
-	friend class PListXmlParser;
-public:
+	PLInteger(int64_t val) : m_value{val} {};
 
 	PLType type() const { return PLType::PLType_Integer; }
 
@@ -72,8 +45,7 @@ class PLString
 {
 	friend class PListXmlParser;
 public:
-	PLString();
-	virtual ~PLString();
+	PLString(std::string str) : m_string{str} {};
 
 	PLType type() const { return PLType::PLType_String; }
 

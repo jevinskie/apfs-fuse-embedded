@@ -158,9 +158,7 @@ ExpectedPLObject PListXmlParser::ParseObject()
 			if (name != "integer" || type != TagType::End)
 				return kz::unexpected{"Invalid end tag, expected </integer>."};
 
-			PLInteger *obj = new PLInteger();
-			obj->m_value = strtoll(content_str.c_str(), nullptr, 0);
-			return *obj;
+			return new PLObject{PLInteger{strtoll(content_str.c_str(), nullptr, 0)}};
 		}
 		else if (name == "string")
 		{
@@ -169,9 +167,7 @@ ExpectedPLObject PListXmlParser::ParseObject()
 			if (name != "string" || type != TagType::End)
 				return kz::unexpected{"Invalid end tag, expected </string>."};
 
-			PLString *obj = new PLString();
-			obj->m_string = content_str;
-			*robj = *obj;
+			return new PLObject{PLString{content_str}};
 		}
 		else if (name == "data")
 		{
@@ -182,16 +178,16 @@ ExpectedPLObject PListXmlParser::ParseObject()
 			if (name != "data" || type != TagType::End)
 				return kz::unexpected{"Invalid end tag, expected </data>."};
 
-			PLData *obj = new PLData();
-			Base64Decode(obj->m_data, content_start, content_size);
-			*robj = *obj;
+			PLObject *obj = new PLObject{PLData{}};
+			Base64Decode(std::get_if<PLData>(obj)->m_data, content_start, content_size);
+			return obj;
 		}
 		else if (name == "array")
 		{
-			PLArray *obj = ParseArray();
+			ExpectedPLArray obj = ParseArray();
 			if (!obj)
-				return kz::unexpected{"Missing array."};;
-			*robj = *obj;
+				return kz::unexpected{obj.error()};
+			return obj;
 		}
 		else if (name == "dict")
 		{

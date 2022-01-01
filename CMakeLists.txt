@@ -111,6 +111,9 @@ add_library(apfs_static STATIC ${APFS_SRC})
 target_link_libraries(apfs_static zlibstatic bz2_static lzfse expected)
 target_compile_definitions(apfs_static PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_static PUBLIC .)
+target_compile_options(apfs_static PUBLIC -Oz -fvisibility=hidden -fvisibility-inlines-hidden -ffunction-sections -fdata-sections)
+target_compile_options(apfs_static PUBLIC -flto=full -fwhole-program-vtables -fvirtual-function-elimination)
+target_compile_options(apfs_static PUBLIC -fno-rtti -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables)
 
 set_property(TARGET apfs_shared apfs_static PROPERTY CXX_STANDARD 20)
 

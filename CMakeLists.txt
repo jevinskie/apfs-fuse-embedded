@@ -75,6 +75,8 @@ set(APFS_SRC
 	ApfsLib/DeviceMac.h
 	ApfsLib/DeviceSparseImage.cpp
 	ApfsLib/DeviceSparseImage.h
+	ApfsLib/DeviceUBoot.cpp
+	ApfsLib/DeviceUBoot.h
 	ApfsLib/DeviceWinFile.cpp
 	ApfsLib/DeviceWinFile.h
 	ApfsLib/DeviceWinPhys.cpp

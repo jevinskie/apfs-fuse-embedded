@@ -424,17 +424,22 @@ bool DeviceDMG::ProcessHeaderXML(uint64_t off, uint64_t size)
 	m_img.Read(off, xmldata.data(), size);
 
 	PListXmlParser parser(xmldata.data(), xmldata.size());
-	const PLDict *plist = std::get<PLDict>(parser.Parse());
+	ExpectedPLObject dobj = parser.Parse();
+	if (!dobj) {
+		fprintf(stderr, "DeviceDMG::ProcessHeaderXML() parse error: '%s'\n", dobj.error());
+		return false;
+	}
+	const PLDict *plist = std::get_if<PLDict>(*dobj);
 
 	if (!plist)
 		return false;
 
-	const PLDict *rsrc_fork = plist->get("resource-fork")->toDict();
+	const PLDict *rsrc_fork = std::get_if<PLDict>(plist->get("resource-fork"));
 
 	if (!rsrc_fork)
 		return false;
 
-	const PLArray *blkx = rsrc_fork->get("blkx")->toArray();
+	const PLArray *blkx = std::get_if<PLArray>(rsrc_fork->get("blkx"));
 
 	if (!blkx)
 		return false;
@@ -445,12 +450,12 @@ bool DeviceDMG::ProcessHeaderXML(uint64_t off, uint64_t size)
 
 	for (k = 0; k < blkx->size(); k++)
 	{
-		entry = blkx->get(k)->toDict();
+		entry = std::get_if<PLDict>(blkx->get(k));
 
 		if (!entry)
 			return false;
 
-		mish = entry->get("Data")->toData();
+		mish = std::get_if<PLData>(entry->get("Data"));
 
 		if (!mish)
 			return false;

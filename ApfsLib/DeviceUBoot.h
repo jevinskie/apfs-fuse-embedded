@@ -53,8 +53,8 @@ struct udevice;
 typedef uint64_t lbaint_t;
 
 struct blk_desc {
-    std::size_t     __nbytes;
     const uint8_t  *__buf;
+    lbaint_t        lba;
     unsigned long   blksz;
     unsigned long   (*block_read)(struct blk_desc *block_dev,
                       lbaint_t start,
@@ -94,4 +94,5 @@ public:
     uint64_t GetSize() const override;
 
 private:
+    struct blk_desc *m_blk;
 };

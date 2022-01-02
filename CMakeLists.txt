@@ -112,8 +112,9 @@ if (DEFINED ENV{UBOOT_INCLUDE_DIR})
 	target_compile_options(
 		apfs_shared
 		PRIVATE
-		"-idirafter $ENV{UBOOT_INCLUDE_DIR}"
-		"-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox"
+		"SHELL:-idirafter $ENV{UBOOT_INCLUDE_DIR}"
+		"SHELL:-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox/include"
+		"-DCONFIG_IS_ENABLED(x)=1"
 	)
 endif()
 target_compile_options(apfs_shared PUBLIC -fPIC -stdlib=libc++)
@@ -128,8 +129,9 @@ if (DEFINED ENV{UBOOT_INCLUDE_DIR})
 	target_compile_options(
 		apfs_static
 		PRIVATE
-		"-idirafter $ENV{UBOOT_INCLUDE_DIR}"
-		"-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox"
+		"SHELL:-idirafter $ENV{UBOOT_INCLUDE_DIR}"
+		"SHELL:-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox/include"
+		"-DCONFIG_IS_ENABLED(x)=1"
 	)
 endif()
 target_compile_options(apfs_static PUBLIC -fPIC -stdlib=libc++)

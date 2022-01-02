@@ -108,8 +108,13 @@ add_library(apfs_shared SHARED ${APFS_SRC})
 target_link_libraries(apfs_shared zlibstatic bz2_static lzfse expected)
 target_compile_definitions(apfs_shared PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_shared PUBLIC .)
-if (DEFINED $ENV{UBOOT_INCLUDE_DIR})
-	target_include_directories(apfs_shared PRIVATE $ENV{UBOOT_INCLUDE_DIR})
+if (DEFINED ENV{UBOOT_INCLUDE_DIR})
+	target_compile_options(
+		apfs_shared
+		PRIVATE
+		"-idirafter $ENV{UBOOT_INCLUDE_DIR}"
+		"-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox"
+	)
 endif()
 target_compile_options(apfs_shared PUBLIC -fPIC -stdlib=libc++)
 target_link_options(apfs_shared PUBLIC -fPIC -stdlib=libc++ -fuse-ld=lld)
@@ -119,8 +124,13 @@ add_library(apfs_static STATIC ${APFS_SRC})
 target_link_libraries(apfs_static zlibstatic bz2_static lzfse expected)
 target_compile_definitions(apfs_static PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_static PUBLIC .)
-if (DEFINED $ENV{UBOOT_INCLUDE_DIR})
-	target_include_directories(apfs_static PRIVATE $ENV{UBOOT_INCLUDE_DIR})
+if (DEFINED ENV{UBOOT_INCLUDE_DIR})
+	target_compile_options(
+		apfs_static
+		PRIVATE
+		"-idirafter $ENV{UBOOT_INCLUDE_DIR}"
+		"-idirafter $ENV{UBOOT_INCLUDE_DIR}/../arch/sandbox"
+	)
 endif()
 target_compile_options(apfs_static PUBLIC -fPIC -stdlib=libc++)
 target_link_options(apfs_static PUBLIC -fPIC -stdlib=libc++ -fuse-ld=lld)

@@ -20,6 +20,8 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#if __has_include(<blk.h>)
+
 #include "Device.h"
 
 class DeviceUBoot : public Device
@@ -36,3 +38,5 @@ public:
 
 private:
 };
+
+#endif

@@ -20,6 +20,15 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DeviceUBoot.h"
 
+#if __has_include(<blk.h>)
+
+extern "C" {
+
+#include <blk.h>
+
+} // extern "C"
+
+
 DeviceUBoot::DeviceUBoot()
 {
 }
@@ -47,3 +56,5 @@ uint64_t DeviceUBoot::GetSize() const
 {
     return 0;
 }
+
+#endif

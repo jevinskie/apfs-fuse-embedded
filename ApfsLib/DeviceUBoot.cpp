@@ -23,6 +23,10 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <cstring>
 
+#include <string_view>
+
+#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+
 DeviceUBoot::DeviceUBoot()
 {
 }
@@ -34,7 +38,25 @@ DeviceUBoot::~DeviceUBoot()
 
 bool DeviceUBoot::Open(const char *name)
 {
-    return false;
+    const char *colon = strchr(name, ':');
+    if (!colon) {
+        fprintf(stderr, "DeviceUBoot::Open(\"%s\") no colon, erroring.\n", name);
+        return false;
+    }
+    const auto if_name_sv = std::string_view{name, static_cast<std::size_t>(colon - name)};
+    const auto dev_num_cstr = colon + 1;
+    const int dev_num = strtol(dev_num_cstr, nullptr, 10);
+    if (if_name_sv == "nvme") {
+        assert(!blk_get_device((int)if_type::IF_TYPE_NVME, dev_num, &m_dev));
+    } else if (if_name_sv == "host") {
+        assert(!blk_get_device((int)if_type::IF_TYPE_HOST, dev_num, &m_dev));
+    } else {
+        fprintf(stderr, "DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",
+                name, (int)if_name_sv.size(), if_name_sv.data());
+    }
+    m_blk = blk_get_by_device(m_dev);
+    assert(m_blk);
+    return true;
 }
 
 void DeviceUBoot::Close()
@@ -97,3 +119,5 @@ uint64_t DeviceUBoot::GetSize() const
     return m_blk->lba * m_blk->blksz;
     return 0;
 }
+
+#endif

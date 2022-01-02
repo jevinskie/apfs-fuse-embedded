@@ -122,6 +122,10 @@ target_compile_options(apfs_static PUBLIC -Oz -fvisibility=hidden -fvisibility-i
 target_compile_options(apfs_static PUBLIC -flto=full -fwhole-program-vtables -fvirtual-function-elimination)
 target_compile_options(apfs_static PUBLIC -fno-rtti -fno-exceptions -fno-unwind-tables -fno-asynchronous-unwind-tables)
 
+if (HAS_UBOOT_STUBS)
+	target_compile_definitions(apfs_static PUBLIC HAS_UBOOT_STUBS)
+endif()
+
 set_property(TARGET apfs_shared apfs_static PROPERTY CXX_STANDARD 20)
 
 if (BUILD_SHARED_LIBS)
@@ -129,6 +133,8 @@ if (BUILD_SHARED_LIBS)
 else()
 	add_library(apfs ALIAS apfs_static)
 endif()
+
+if (NOT HAS_UBOOT_STUBS)
 
 add_executable(apfs-dump
 	ApfsDump/Dumper.cpp
@@ -167,3 +173,5 @@ set_property(TARGET apfsutil PROPERTY CXX_STANDARD 20)
 include(GNUInstallDirs)
 install(TARGETS apfs-fuse RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(TARGETS apfsutil RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+
+endif() # HAS_UBOOT_STUBS

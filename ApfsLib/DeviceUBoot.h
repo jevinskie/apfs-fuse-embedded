@@ -20,6 +20,8 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+
 #include <cstdlib>
 #include <cstdint>
 
@@ -48,7 +50,9 @@ extern "C" {
 
 #if !__has_include(<blk.h>)
 
-struct udevice;
+struct udevice {
+    const char *name;
+};
 
 typedef uint64_t lbaint_t;
 
@@ -94,5 +98,8 @@ public:
     uint64_t GetSize() const override;
 
 private:
+    struct udevice *m_dev;
     struct blk_desc *m_blk;
 };
+
+#endif

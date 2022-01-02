@@ -27,6 +27,7 @@
 #include "DeviceMac.h"
 #include "DeviceDMG.h"
 #include "DeviceSparseImage.h"
+#include "DeviceUBoot.h"
 #include "DeviceVDI.h"
 
 Device::Device()
@@ -43,6 +44,21 @@ Device * Device::OpenDevice(const char * name)
 	Device *dev = nullptr;
 	bool rc;
 	const char *ext;
+
+#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+
+	dev = new DeviceUBoot();
+	rc = dev->Open(name);
+	if (rc)
+		return dev;
+	else
+	{
+		dev->Close();
+		delete dev;
+		dev = nullptr;
+	}
+
+#else
 
 #ifdef _WIN32
 	if (!strncmp(name, "\\\\.\\PhysicalDrive", 17))
@@ -106,6 +122,7 @@ Device * Device::OpenDevice(const char * name)
 			dev = nullptr;
 		}
 	}
+#endif
 
 	return dev;
 }

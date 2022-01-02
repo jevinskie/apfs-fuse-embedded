@@ -20,6 +20,9 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include <cstdlib>
+#include <cstdint>
+
 #include "Device.h"
 
 enum class if_type {
@@ -43,11 +46,38 @@ enum class if_type {
 
 extern "C" {
 
+#if !__has_include(<blk.h>)
+
 struct udevice;
+
+typedef uint64_t lbaint_t;
+
+struct blk_desc {
+    std::size_t     __nbytes;
+    const uint8_t  *__buf;
+    unsigned long   blksz;
+    unsigned long   (*block_read)(struct blk_desc *block_dev,
+                      lbaint_t start,
+                      lbaint_t blkcnt,
+                      void *buffer);
+    unsigned long   (*block_write)(struct blk_desc *block_dev,
+                       lbaint_t start,
+                       lbaint_t blkcnt,
+                       const void *buffer);
+    unsigned long   (*block_erase)(struct blk_desc *block_dev,
+                       lbaint_t start,
+                       lbaint_t blkcnt);
+};
 
 int blk_get_device(int if_type, int devnum, struct udevice **devp);
 
 struct blk_desc *blk_get_by_device(struct udevice *dev);
+
+#else
+
+#include <blk.h>
+
+#endif
 
 } // extern "C"
 

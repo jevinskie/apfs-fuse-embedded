@@ -51,7 +51,7 @@ ApfsContainer::~ApfsContainer()
 {
 }
 
-bool ApfsContainer::Init(xid_t req_xid)
+bool ApfsContainer::Init(xid_t req_xid, bool use_keymgr)
 {
 	std::vector<uint8_t> blk;
 
@@ -182,7 +182,7 @@ bool ApfsContainer::Init(xid_t req_xid)
 
 	// m_sb.nx_spaceman_oid
 
-	if ((m_nx.nx_keylocker.pr_start_addr != 0) && (m_nx.nx_keylocker.pr_block_count != 0))
+	if ((m_nx.nx_keylocker.pr_start_addr != 0) && (m_nx.nx_keylocker.pr_block_count != 0) && use_keymgr)
 	{
 		if (!m_keymgr.Init(m_nx.nx_keylocker.pr_start_addr, m_nx.nx_keylocker.pr_block_count, m_nx.nx_uuid))
 		{

@@ -39,7 +39,7 @@ public:
 	ApfsContainer(Device *disk_main, uint64_t main_start, uint64_t main_len, Device *disk_tier2 = 0, uint64_t tier2_start = 0, uint64_t tier2_len = 0);
 	~ApfsContainer();
 
-	bool Init(xid_t req_xid = 0);
+	bool Init(xid_t req_xid = 0, bool use_keymgr = true);
 
 	ApfsVolume *GetVolume(unsigned int index, const std::string &passphrase = std::string(), xid_t snap_xid = 0);
 	unsigned int GetVolumeCnt() const;

@@ -50,6 +50,7 @@ public:
 
 	bool ReadBlocks(uint8_t *data, paddr_t paddr, uint64_t blkcnt, uint64_t xts_tweak);
 	bool isSealed() const { return (m_sb.apfs_incompatible_features & APFS_INCOMPAT_SEALED_VOLUME) != 0; }
+	bool isPreboot() const { return m_sb.apfs_role == APFS_VOL_ROLE_PREBOOT; }
 
 private:
 	static int CompareSnapMetaKey(const void *skey, size_t skey_len, const void *ekey, size_t ekey_len, void *context);

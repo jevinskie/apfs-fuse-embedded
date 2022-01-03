@@ -82,7 +82,8 @@ void AesXts::MultiplyTweak(uint64_t* tweak)
 	uint8_t c1;
 	uint8_t c2;
 
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#if (defined(__BYTE_ORDER) && defined(__LITTLE_ENDIAN) && (__BYTE_ORDER == __LITTLE_ENDIAN)) || \
+	(defined(_BYTE_ORDER) && defined(_LITTLE_ENDIAN) && (_BYTE_ORDER == _LITTLE_ENDIAN))
 	c1 = (tweak[0] & 0x8000000000000000ULL) ? 1 : 0;
 	c2 = (tweak[1] & 0x8000000000000000ULL) ? 0x87 : 0;
 

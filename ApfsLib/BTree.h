@@ -38,7 +38,7 @@ class ApfsContainer;
 class ApfsVolume;
 
 // This enables a rudimentary disk cache ...
-#ifndef _LIBCPP_HAS_NO_THREADS
+#if !(defined(_LIBCPP_HAS_NO_THREADS) || M1N1 || __UBOOT__)
 #define BTREE_USE_MAP
 #endif
 // TODO: Think about a better solution.

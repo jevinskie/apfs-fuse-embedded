@@ -11,3 +11,4 @@ add_subdirectory(lzfse)
 target_include_directories(lzfse PUBLIC lzfse/src)
 
 add_subdirectory(miniz)
+target_compile_options(miniz PRIVATE -fPIC)

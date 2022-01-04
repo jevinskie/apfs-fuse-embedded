@@ -1,9 +1,6 @@
 [submodule "3rdparty/lzfse"]
 	path = 3rdparty/lzfse
 	url = https://github.com/lzfse/lzfse.git
-[submodule "3rdparty/zlib-ng"]
-	path = 3rdparty/zlib-ng
-	url = https://github.com/zlib-ng/zlib-ng
 [submodule "3rdparty/expected"]
 	path = 3rdparty/expected
 	url = https://github.com/kiznit/expected

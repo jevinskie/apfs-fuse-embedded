@@ -10,3 +10,6 @@
 [submodule "3rdparty/expected"]
 	path = 3rdparty/expected
 	url = https://github.com/kiznit/expected
+[submodule "3rdparty/miniz"]
+	path = 3rdparty/miniz
+	url = https://github.com/richgel999/miniz

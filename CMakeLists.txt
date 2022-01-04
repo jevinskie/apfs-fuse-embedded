@@ -105,7 +105,7 @@ set(APFS_SRC
 )
 
 add_library(apfs_shared SHARED ${APFS_SRC})
-target_link_libraries(apfs_shared zlibstatic bz2_static lzfse expected)
+target_link_libraries(apfs_shared miniz bz2_static lzfse expected)
 target_compile_definitions(apfs_shared PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_shared PUBLIC .)
 if (NOT APPLE)
@@ -115,7 +115,7 @@ endif()
 
 
 add_library(apfs_static STATIC ${APFS_SRC})
-target_link_libraries(apfs_static zlibstatic bz2_static lzfse expected)
+target_link_libraries(apfs_static miniz bz2_static lzfse expected)
 target_compile_definitions(apfs_static PUBLIC _FILE_OFFSET_BITS=64 _DARWIN_USE_64_BIT_INODE)
 target_include_directories(apfs_static PUBLIC .)
 if (NOT APPLE)

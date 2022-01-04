@@ -33,7 +33,8 @@
 #include "Util.h"
 #include "Crc32.h"
 
-#include <zlib.h>
+// #include <zlib.h>
+#include <miniz.h>
 #include <bzlib.h>
 
 extern "C" {

@@ -13,3 +13,5 @@
 [submodule "3rdparty/miniz"]
 	path = 3rdparty/miniz
 	url = https://github.com/richgel999/miniz
+[submodule "bzip2"]
+	url = https://github.com/jevinskie/bzip2-embedded

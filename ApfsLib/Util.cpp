@@ -192,6 +192,7 @@ std::string hexstr(const uint8_t *data, size_t size)
 
 void dump_utf8(std::ostream &st, const uint8_t* str)
 {
+#if 0
 	size_t ptr = 0;
 	uint8_t ch;
 	char32_t uch;
@@ -233,8 +234,12 @@ void dump_utf8(std::ostream &st, const uint8_t* str)
 	}
 
 	st << str << std::endl;
+#else
+	st << "dump_utf8(\"" << str << "\") not implemented" << std::endl;
+#endif
 }
 
+#if 0
 void dump_utf32(std::ostream &st, const char32_t *str, size_t size)
 {
 	size_t k;
@@ -250,6 +255,7 @@ void dump_utf32(std::ostream &st, const char32_t *str, size_t size)
 			st << '.';
 	st << std::endl;
 }
+#endif
 
 uint32_t HashFilename(const uint8_t* utf8str, uint16_t name_len, bool case_fold)
 {

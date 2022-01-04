@@ -1,9 +1,6 @@
 [submodule "3rdparty/lzfse"]
 	path = 3rdparty/lzfse
 	url = https://github.com/lzfse/lzfse.git
-[submodule "3rdparty/bzip2"]
-	path = 3rdparty/bzip2
-	url = https://gitlab.com/bzip2/bzip2
 [submodule "3rdparty/zlib-ng"]
 	path = 3rdparty/zlib-ng
 	url = https://github.com/zlib-ng/zlib-ng
@@ -13,5 +10,6 @@
 [submodule "3rdparty/miniz"]
 	path = 3rdparty/miniz
 	url = https://github.com/richgel999/miniz
-[submodule "bzip2"]
+[submodule "3rdparty/bzip2"]
+	path = 3rdparty/bzip2
 	url = https://github.com/jevinskie/bzip2-embedded

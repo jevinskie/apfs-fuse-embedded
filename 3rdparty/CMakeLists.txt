@@ -11,8 +11,3 @@ add_subdirectory(lzfse)
 target_include_directories(lzfse PUBLIC lzfse/src)
 
 add_subdirectory(miniz)
-
-# set(ZLIB_COMPAT ON)
-# add_subdirectory(zlib-ng)
-# target_include_directories(zlib PUBLIC ${zlib_BINARY_DIR})
-# target_compile_options(zlib PUBLIC -fPIC)

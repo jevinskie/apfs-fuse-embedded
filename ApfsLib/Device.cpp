@@ -45,7 +45,7 @@ Device * Device::OpenDevice(const char * name)
 	bool rc;
 	const char *ext;
 
-#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+#if defined(HAS_UBOOT_STUBS) || defined(__UBOOT__)
 
 	dev = new DeviceUBoot();
 	rc = dev->Open(name);

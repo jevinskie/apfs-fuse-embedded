@@ -22,10 +22,11 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cassert>
 #include <cstring>
+#include <cstdio>
 
 #include <string_view>
 
-#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+#if defined(HAS_UBOOT_STUBS) || defined(__UBOOT__)
 
 DeviceUBoot::DeviceUBoot()
 {
@@ -40,21 +41,23 @@ bool DeviceUBoot::Open(const char *name)
 {
     const char *colon = strchr(name, ':');
     if (!colon) {
-        fprintf(stderr, "DeviceUBoot::Open(\"%s\") no colon, erroring.\n", name);
+        printf("DeviceUBoot::Open(\"%s\") no colon, erroring.\n", name);
         return false;
     }
     const auto if_name_sv = std::string_view{name, static_cast<std::size_t>(colon - name)};
     const auto dev_num_cstr = colon + 1;
     const int dev_num = strtol(dev_num_cstr, nullptr, 10);
     if (if_name_sv == "nvme") {
+        printf("DeviceUBoot::Open(\"%s\") trying nvme : %d\n", name, dev_num);
         assert(!blk_get_device((int)intf_type::IF_TYPE_NVME, dev_num, &m_dev));
     } else if (if_name_sv == "host") {
+        printf("DeviceUBoot::Open(\"%s\") trying host : %d\n", name, dev_num);
         assert(!blk_get_device((int)intf_type::IF_TYPE_HOST, dev_num, &m_dev));
     } else {
-        fprintf(stderr, "DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",
+        printf("DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",
                 name, (int)if_name_sv.size(), if_name_sv.data());
     }
-    m_blk = blk_get_by_device(m_dev);
+    m_blk = (struct blk_desc *)dev_get_uclass_plat(m_dev);
     assert(m_blk);
     return true;
 }
@@ -65,7 +68,7 @@ void DeviceUBoot::Close()
 
 bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 {
-    // fprintf(stderr, "Read: offs: %llu len: %llu\n", offs, len);
+    printf("Read: offs: %p len: %p\n", (void*)offs, (void*)len);
     uint8_t blkbuf[m_blk->blksz];
     const uint64_t blk_start = offs / m_blk->blksz;
     const uint64_t blk_end = (offs + len - 1) / m_blk->blksz;
@@ -74,13 +77,13 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
     uint8_t *p = (uint8_t *)data;
     uint64_t blkidx = blk_start;
 
-    // fprintf(stderr, "blk_start: %llu blk_end: %llu nblk: %llu nbyte: %llu\n", blk_start, blk_end, nblk, nbyte);
+    printf("blk_start: %p blk_end: %p nblk: %p nbyte: %p\n", (void*)blk_start, (void*)(void*)blk_end, (void*)nblk, (void*)nbyte);
 
 
     if (offs % m_blk->blksz != 0) {
         const uint64_t start_blk_off = offs % m_blk->blksz;
         const uint64_t start_blk_nbyte = std::min(nbyte, m_blk->blksz - start_blk_off);
-        // fprintf(stderr, "start_blk_off: %llu start_blk_nbyte: %llu\n", start_blk_off, start_blk_nbyte);
+        printf("start_blk_off: %p start_blk_nbyte: %p\n", (void*)start_blk_off, (void*)start_blk_nbyte);
         if (m_blk->block_read(m_blk, blkidx, 1, blkbuf) != 1) {
             return false;
         }
@@ -93,7 +96,7 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 
     const uint64_t ncontigblk = nbyte / m_blk->blksz;
     const uint64_t ncontigbyte = ncontigblk * m_blk->blksz;
-    // fprintf(stderr, "nbyte: %llu ncontigblk: %llu ncontigbyte: %llu\n", nbyte, ncontigblk, ncontigbyte);
+    printf("nbyte: %p ncontigblk: %p ncontigbyte: %p\n", (void*)nbyte, (void*)ncontigblk, (void*)ncontigbyte);
     if (m_blk->block_read(m_blk, blkidx, ncontigblk, p) != ncontigblk) {
         return false;
     }

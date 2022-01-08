@@ -20,7 +20,7 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#if defined(HAS_UBOOT_STUBS) || __has_include(<blk.h>)
+#if defined(HAS_UBOOT_STUBS) || defined(__UBOOT__)
 
 #include <cstdlib>
 #include <cstdint>
@@ -74,12 +74,17 @@ struct blk_desc {
 };
 
 int blk_get_device(int if_type, int devnum, struct udevice **devp);
-
+void *dev_get_uclass_plat(const struct udevice *dev);
 struct blk_desc *blk_get_by_device(struct udevice *dev);
 
 #else
 
 #include <blk.h>
+
+// FIXME (lol)
+// #include <dm/device.h>
+void *dev_get_uclass_plat(const struct udevice *dev);
+
 
 #endif
 

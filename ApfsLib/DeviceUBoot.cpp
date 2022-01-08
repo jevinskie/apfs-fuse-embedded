@@ -77,7 +77,7 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
     uint8_t *p = (uint8_t *)data;
     uint64_t blkidx = blk_start;
 
-    printf("blk_start: %p blk_end: %p nblk: %p nbyte: %p\n", (void*)blk_start, (void*)(void*)blk_end, (void*)nblk, (void*)nbyte);
+    printf("blk_start: %p blk_end: %p nblk: %p nbyte: %p\n", (void*)blk_start, (void*)blk_end, (void*)nblk, (void*)nbyte);
 
 
     if (offs % m_blk->blksz != 0) {

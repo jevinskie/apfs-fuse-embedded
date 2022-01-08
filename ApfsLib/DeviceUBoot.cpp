@@ -68,8 +68,8 @@ void DeviceUBoot::Close()
 
 bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 {
-    printf("Read: offs: %p len: %p\n", (void*)offs, (void*)len);
-    uint8_t blkbuf[m_blk->blksz];
+    // printf("Read: offs: %p len: %p\n", (void*)offs, (void*)len);
+    uint8_t blkbuf[4096];
     const uint64_t blk_start = offs / m_blk->blksz;
     const uint64_t blk_end = (offs + len - 1) / m_blk->blksz;
     uint64_t nblk = blk_end - blk_start + 1;
@@ -77,14 +77,14 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
     uint8_t *p = (uint8_t *)data;
     uint64_t blkidx = blk_start;
 
-    printf("blk_start: %p blk_end: %p nblk: %p nbyte: %p\n", (void*)blk_start, (void*)blk_end, (void*)nblk, (void*)nbyte);
+    // printf("blk_start: %p blk_end: %p nblk: %p nbyte: %p\n", (void*)blk_start, (void*)blk_end, (void*)nblk, (void*)nbyte);
 
 
     if (offs % m_blk->blksz != 0) {
         const uint64_t start_blk_off = offs % m_blk->blksz;
         const uint64_t start_blk_nbyte = std::min(nbyte, m_blk->blksz - start_blk_off);
-        printf("start_blk_off: %p start_blk_nbyte: %p\n", (void*)start_blk_off, (void*)start_blk_nbyte);
-        if (m_blk->block_read(m_blk, blkidx, 1, blkbuf) != 1) {
+        // printf("start_blk_off: %p start_blk_nbyte: %p\n", (void*)start_blk_off, (void*)start_blk_nbyte);
+        if (blk_dread(m_blk, blkidx, 1, blkbuf) != 1) {
             return false;
         }
         nblk -= 1;
@@ -96,8 +96,8 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 
     const uint64_t ncontigblk = nbyte / m_blk->blksz;
     const uint64_t ncontigbyte = ncontigblk * m_blk->blksz;
-    printf("nbyte: %p ncontigblk: %p ncontigbyte: %p\n", (void*)nbyte, (void*)ncontigblk, (void*)ncontigbyte);
-    if (m_blk->block_read(m_blk, blkidx, ncontigblk, p) != ncontigblk) {
+    // printf("nbyte: %p ncontigblk: %p ncontigbyte: %p\n", (void*)nbyte, (void*)ncontigblk, (void*)ncontigbyte);
+    if (blk_dread(m_blk, blkidx, ncontigblk, p) != ncontigblk) {
         return false;
     }
     nblk -= ncontigblk;
@@ -107,7 +107,7 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 
     if (nbyte) {
         assert(nbyte < m_blk->blksz);
-        if (m_blk->block_read(m_blk, blkidx, 1, blkbuf) != 1) {
+        if (blk_dread(m_blk, blkidx, 1, blkbuf) != 1) {
             return false;
         }
         nblk -= 1;

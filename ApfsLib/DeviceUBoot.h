@@ -27,7 +27,7 @@ along with apfs-fuse.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Device.h"
 
-enum class if_type {
+enum class intf_type {
     IF_TYPE_UNKNOWN = 0,
     IF_TYPE_IDE,
     IF_TYPE_SCSI,

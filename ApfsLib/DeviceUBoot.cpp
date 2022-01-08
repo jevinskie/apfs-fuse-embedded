@@ -47,9 +47,9 @@ bool DeviceUBoot::Open(const char *name)
     const auto dev_num_cstr = colon + 1;
     const int dev_num = strtol(dev_num_cstr, nullptr, 10);
     if (if_name_sv == "nvme") {
-        assert(!blk_get_device((int)if_type::IF_TYPE_NVME, dev_num, &m_dev));
+        assert(!blk_get_device((int)intf_type::IF_TYPE_NVME, dev_num, &m_dev));
     } else if (if_name_sv == "host") {
-        assert(!blk_get_device((int)if_type::IF_TYPE_HOST, dev_num, &m_dev));
+        assert(!blk_get_device((int)intf_type::IF_TYPE_HOST, dev_num, &m_dev));
     } else {
         fprintf(stderr, "DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",
                 name, (int)if_name_sv.size(), if_name_sv.data());

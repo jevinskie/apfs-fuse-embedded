@@ -70,6 +70,7 @@ bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)
 {
     // printf("Read: offs: %p len: %p\n", (void*)offs, (void*)len);
     uint8_t blkbuf[4096];
+    assert(m_blk->blksz <= sizeof(blkbuf));
     const uint64_t blk_start = offs / m_blk->blksz;
     const uint64_t blk_end = (offs + len - 1) / m_blk->blksz;
     uint64_t nblk = blk_end - blk_start + 1;

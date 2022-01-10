@@ -61,7 +61,7 @@ Also helps making the driver run on big-endian architectures.
 #endif
 
 #ifndef be16toh
-#ifdef __LITTLE_ENDIAN__
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
 #define be16toh(x) bswap_16(x)
 #define be32toh(x) bswap_32(x)
@@ -77,9 +77,6 @@ Also helps making the driver run on big-endian architectures.
 #define htole64(x) (x)
 
 #else
-#ifndef __BIG_ENDIAN__
-#error unknown endianness
-#endif
 
 #define be16toh(x) (x)
 #define be32toh(x) (x)

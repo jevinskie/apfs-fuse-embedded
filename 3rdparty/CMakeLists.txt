@@ -15,3 +15,7 @@ target_include_directories(lzfse PUBLIC lzfse/src)
 add_subdirectory(miniz)
 target_compile_options(miniz PRIVATE -fPIC)
 target_compile_definitions(miniz PUBLIC MINIZ_NO_TIME)
+
+if (CMAKE_CROSSCOMPILING)
+   set_target_properties(bzip2 bzip2recover lzfse_cli PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endif()

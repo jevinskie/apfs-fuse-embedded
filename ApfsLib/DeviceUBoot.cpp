@@ -48,10 +48,13 @@ bool DeviceUBoot::Open(const char *name)
     const auto dev_num_cstr = colon + 1;
     const int dev_num = strtol(dev_num_cstr, nullptr, 10);
     if (if_name_sv == "nvme") {
-        printf("DeviceUBoot::Open(\"%s\") trying nvme : %d\n", name, dev_num);
+        printf("DeviceUBoot::Open(\"%s\") trying nvme: %d\n", name, dev_num);
         assert(!blk_get_device((int)intf_type::IF_TYPE_NVME, dev_num, &m_dev));
+    } else if (if_name_sv == "virtio") {
+        printf("DeviceUBoot::Open(\"%s\") trying virtio: %d\n", name, dev_num);
+        assert(!blk_get_device((int)intf_type::IF_TYPE_VIRTIO, dev_num, &m_dev));
     } else if (if_name_sv == "host") {
-        printf("DeviceUBoot::Open(\"%s\") trying host : %d\n", name, dev_num);
+        printf("DeviceUBoot::Open(\"%s\") trying host: %d\n", name, dev_num);
         assert(!blk_get_device((int)intf_type::IF_TYPE_HOST, dev_num, &m_dev));
     } else {
         printf("DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",

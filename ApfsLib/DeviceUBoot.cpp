@@ -47,26 +47,34 @@ bool DeviceUBoot::Open(const char *name)
     const auto if_name_sv = std::string_view{name, static_cast<std::size_t>(colon - name)};
     const auto dev_num_cstr = colon + 1;
     const int dev_num = strtol(dev_num_cstr, nullptr, 10);
+    struct udevice *dev = nullptr;
     if (if_name_sv == "nvme") {
         printf("DeviceUBoot::Open(\"%s\") trying nvme: %d\n", name, dev_num);
-        assert(!blk_get_device((int)intf_type::IF_TYPE_NVME, dev_num, &m_dev));
+        assert(!blk_get_device((int)intf_type::IF_TYPE_NVME, dev_num, &dev));
     } else if (if_name_sv == "virtio") {
         printf("DeviceUBoot::Open(\"%s\") trying virtio: %d\n", name, dev_num);
-        assert(!blk_get_device((int)intf_type::IF_TYPE_VIRTIO, dev_num, &m_dev));
+        assert(!blk_get_device((int)intf_type::IF_TYPE_VIRTIO, dev_num, &dev));
     } else if (if_name_sv == "host") {
         printf("DeviceUBoot::Open(\"%s\") trying host: %d\n", name, dev_num);
-        assert(!blk_get_device((int)intf_type::IF_TYPE_HOST, dev_num, &m_dev));
+        assert(!blk_get_device((int)intf_type::IF_TYPE_HOST, dev_num, &dev));
     } else {
         printf("DeviceUBoot::Open(\"%s\") unsupported if_name: \"%.*s\".\n",
                 name, (int)if_name_sv.size(), if_name_sv.data());
     }
-    m_blk = (struct blk_desc *)dev_get_uclass_plat(m_dev);
+    m_blk = (struct blk_desc *)dev_get_uclass_plat(dev);
     assert(m_blk);
+    return true;
+}
+
+bool DeviceUBoot::Open(struct blk_desc *fs_dev_desc) {
+    assert(fs_dev_desc);
+    m_blk = fs_dev_desc;
     return true;
 }
 
 void DeviceUBoot::Close()
 {
+    // might be missing somethging but i can't find uboot allocating anything we need to free
 }
 
 bool DeviceUBoot::Read(void * data, uint64_t offs, uint64_t len)

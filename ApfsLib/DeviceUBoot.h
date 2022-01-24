@@ -173,13 +173,13 @@ public:
     ~DeviceUBoot();
 
     bool Open(const char *name) override;
+    bool Open(struct blk_desc *fs_dev_desc);
     void Close() override;
 
     bool Read(void *data, uint64_t offs, uint64_t len) override;
     uint64_t GetSize() const override;
 
 private:
-    struct udevice *m_dev;
     struct blk_desc *m_blk;
 };
 

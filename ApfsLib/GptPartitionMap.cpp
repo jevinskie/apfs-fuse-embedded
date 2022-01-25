@@ -198,3 +198,7 @@ void GptPartitionMap::ListEntries()
 		printf("\n");
 	}
 }
+
+uint32_t GptPartitionMap::size() const {
+	return m_hdr->NumberOfPartitionEntries;
+}

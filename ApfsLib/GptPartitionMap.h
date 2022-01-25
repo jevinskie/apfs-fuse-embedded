@@ -23,6 +23,8 @@ public:
 
 	void ListEntries();
 
+	uint32_t size() const;
+
 private:
 	Crc32 m_crc;
 

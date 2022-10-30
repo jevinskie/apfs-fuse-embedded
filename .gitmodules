@@ -1,6 +1,6 @@
 [submodule "3rdparty/lzfse"]
 	path = 3rdparty/lzfse
-	url = https://github.com/lzfse/lzfse.git
+	url = https://github.com/lzfse/lzfse
 [submodule "3rdparty/expected"]
 	path = 3rdparty/expected
 	url = https://github.com/kiznit/expected
@@ -10,3 +10,4 @@
 [submodule "3rdparty/bzip2"]
 	path = 3rdparty/bzip2
 	url = https://github.com/jevinskie/bzip2-embedded
+	branch = jev/main
